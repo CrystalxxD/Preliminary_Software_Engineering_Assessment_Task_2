@@ -45,6 +45,10 @@ Postconditions: Player wins if alive and reaches exit with key; loses if health 
 
 Exceptions: Player tries to move into walls; combat with enemies results in death.
 ## Design
+### Gnatt Chart
+![alt text](<Images/Gantt chart.png>)
+---
+
 ## Build and Test
 In Sprint 1 Folder
 
