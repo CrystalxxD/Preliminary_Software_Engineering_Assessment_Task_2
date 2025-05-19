@@ -49,10 +49,21 @@ Exceptions: Player tries to move into walls; combat with enemies results in deat
 ![alt text](<Images/Gantt chart.png>)
 ---
 ### Story Board
-![Alt text](Images/Text%20Based%20Game%20Story%20Board.png)
-![Alt text](Images/Gui%20of%20Story%20Board.png)
 ---
-
+#### Text Based Part
+![alt text](<Images/Text Based Game Story Board.png>)
+---
+#### Gui Part
+![alt text](<Images/Gui of Story Board.png>)
+---
+### Dataflow Diagram
+---
+#### Level 0
+![alt text](<Images/DataFlow Diagram Level 0.png>)
+---
+#### Level 1
+![alt text](<Images/DataFlow Diagram Level 1.png>)
+---
 ## Build and Test
 In Sprint 1 Folder
 
@@ -73,3 +84,5 @@ The code uses classes and modular design with well-named functions and variables
 Adding Classes for player and enemies as well as the room and dungeon layout.
 
 Adding Combat
+
+Adding Exits
