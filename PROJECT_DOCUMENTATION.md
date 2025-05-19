@@ -48,6 +48,10 @@ Exceptions: Player tries to move into walls; combat with enemies results in deat
 ### Gnatt Chart
 ![alt text](<Images/Gantt chart.png>)
 ---
+### Story Board
+![Alt text](Images/Text%20Based%20Game%20Story%20Board.png)
+![Alt text](Images/Gui%20of%20Story%20Board.png)
+---
 
 ## Build and Test
 In Sprint 1 Folder
