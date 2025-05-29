@@ -6,7 +6,7 @@ player_health = 100
 
 def show_intro():
     print("=" * 40)
-    print("   DUNGEON ESCAPE   ")   
+    print("   Tower of Blood   ")   
     print("=" * 40)
     print("Type a command to begin your escape.\n")
 
