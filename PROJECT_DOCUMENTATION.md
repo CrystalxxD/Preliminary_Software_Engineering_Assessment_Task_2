@@ -3,12 +3,12 @@
 ### Requirements Definition
 #### Functional Requirements
 
-The game must allow the player to select a character class (e.g., Assassin, Warrior, Mage, Archer), each with unique stats. Players must navigate through at least 20 procedurally generated rooms across two dungeon floors using the WASD keys. Each room may contain enemies, items like potions or armor, or a key required to escape. Players must be able to fight enemies and bosses, pick up items, and track stats such as health, attack, and defense.
+The game must allow the player to select a character class (e.g., Assassin, Warrior, Mage, Archer), each with unique stats. Players must navigate through randomly generated rooms across multiple dungeon floors using the WASD keys. Each room may contain enemies, items like potions or armor, or a key required to escape. Players must be able to fight enemies and bosses, pick up items, and track stats such as health, attack, and defense.
 
 ---
 #### Non-Functional Requirements
 
-The game should be responsive and user-friendly with simple controls. It must load quickly, have a clean text or GUI interface, and be built in Python using Object-Oriented Programming (OOP) principles. The final version should use a GUI (PySimpleGUI) and run without needing external game engines.
+The game should be responsive and user-friendly with simple controls. It must load quickly, have a clean text or GUI interface, and be built in Python using Object-Oriented Programming (OOP) principles. The final version should use a GUI (Pygame) and run without needing external game engines.
 
 ---
 ## Determining Specification
@@ -218,12 +218,101 @@ Adding
 ![alt text](<Images/Structure Chart.png>)
 ---
 ## Build and Test
-[**Sprint 2 Folder**](<Sprint 2>)
-- [main.py](<Sprint 2/main.py>)
-- [enemy.py](<Sprint 2/enemy.py>)
-- [dungeon.py](<Sprint 2/dungeon.py>)
-- [player.py](<Sprint 2/player.py>)
-- [combat.py](<Sprint 2/combat.py>)
-- [room.py](<Sprint 2/room.py>)
+main.py
+```
+from player import Player
+from dungeon import Dungeon
+from combat import battle
+
+def main():
+    name = input("Enter your name: ") # lets you choose name
+    cls = input("Choose your class (Assassin, Mage, Archer, Warrior): ").lower() # Gives you different class choices to choose from. Each one with different abilities
+    player = Player(name, cls) 
+    dungeon = Dungeon(10, 10)
+
+    while True:
+        print(f"\nYou are at {player.position} on Floor {player.floor + 1}") # Shows where you are
+        room = dungeon.get_room(player.floor, player.position)
+        dungeon.draw_minimap(player.floor, player.position)
+
+        # Combat
+        if room.has_enemy and room.enemy and room.enemy.hp > 0:
+            if not battle(player, room.enemy):
+                break
+            else:
+                room.has_enemy = False
+                room.enemy = None
+
+        # Items
+        for item in room.items:
+            print(f"You found a {item.replace('_', ' ')}!")
+            player.pick_up_item(item)
+        room.items.clear()
+
+        if room.has_key:
+            print("You found the key!")
+            player.has_key = True
+            room.has_key = False
+
+        # Victory
+        if (player.floor == 1 and 
+            player.position == dungeon.exit_room_position and 
+            player.has_key) == True:
+            print("You found the dungeon exit and escaped! 🏆 You win!")
+            break
+
+        # Movement
+        move = input("Move (w/a/s/d) or down a floor (j): ").lower()
+        dx, dy = 0, 0
+        if move == 'w': dy = 1
+        elif move == 's': dy = -1
+        elif move == 'a': dx = -1
+        elif move == 'd': dx = 1
+        elif move == 'j':
+            if player.floor == 1:
+                player.floor = 0
+                print("You descend to Floor 1.")
+                continue
+            else:
+                print("You're already on the bottom floor.")
+                continue
+        else:
+            print("Invalid input.")
+            continue
+
+        new_pos = (player.position[0] + dx, player.position[1] + dy)
+        if dungeon.room_exists(player.floor, new_pos):
+            player.position = new_pos
+        else:
+            print("No room that way.")
+            continue
+
+        # ⬆️ Automatic floor transition when on stairs
+        new_room = dungeon.get_room(player.floor, player.position)
+        if new_room.is_stairs and player.floor == 0:
+            print("You found the stairs and ascended to Floor 2.")
+            player.floor = 1
+            # Keep position at same coords if valid, else reset to (0, 0)
+            if not dungeon.room_exists(1, player.position):
+                player.position = (0, 0)
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+ 
 
 ## Review
+- Evaluate how effectively your project meets the functional and non-functional requirements defined in your planning.
+Sprint 2 of my project met my function and non functional requirements that was about the usability, gameplay and functionality. However it didn't complete the requirements of using a GUI implemented userface
+
+- Analyse the performance of your program against the key use-cases you identified.
+
+
+- Assess the quality of your code in terms of readability, structure, and maintainability.
+
+
+- Explain the improvements that should be made in the next stage of development.
+
