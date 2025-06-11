@@ -284,6 +284,38 @@ BEGIN Main
 END Main
 ---
 #### Drop Item()
+BEGIN DropItem
+    DISPLAY "Drop Menu:"
+    CALL ShowInventory
+    PROMPT "Drop [w]eapon, [a]rmour, or [c]ancel?"
+    INPUT choice
+
+    IF choice = "w" THEN
+        IF weapon list is empty THEN
+            DISPLAY "No weapons to drop."
+        ELSE
+            PROMPT "Enter weapon number to drop:"
+            INPUT index
+            IF index is valid THEN
+                REMOVE weapon at index
+                DISPLAY "Weapon dropped."
+            ELSE
+                DISPLAY "Invalid number."
+            END IF
+        END IF
+
+    ELSE IF choice = "a" THEN
+        IF armour exists THEN
+            REMOVE armour
+            DISPLAY "Armour dropped."
+        ELSE
+            DISPLAY "No armour to drop."
+        END IF
+
+    ELSE
+        DISPLAY "Drop cancelled."
+    END IF
+END DropItem
 
 ---
 #### Display Title()
