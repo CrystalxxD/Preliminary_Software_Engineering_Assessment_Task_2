@@ -69,7 +69,7 @@ Exceptions: Player tries to move into walls; combat with enemies results in deat
 ![alt text](<Images/DataFlow Diagram Level 1.png>)
 ---
 ## Build and Test
-```
+``` bash
 import random
 
 # Starting items
@@ -282,6 +282,7 @@ BEGIN Main
 
     UNTIL command = "q"
 END Main
+
 ---
 #### Drop Item()
 BEGIN DropItem
@@ -326,7 +327,7 @@ End DisplayTitleScreen
 ---
 ## Build and Test
 main.py
-```
+``` bash
 from player import Player
 from dungeon import Dungeon
 from combat import battle
@@ -409,7 +410,7 @@ if __name__ == "__main__":
 
 ```
 player.py
-```
+``` bash
 import random
 
 class Player:
@@ -459,7 +460,7 @@ class Player:
 ```
 
 dungeon.py
-```
+``` bash
 import random
 from room import Room
 
@@ -541,7 +542,7 @@ class Dungeon:
 ```
 
 room.py
-```
+``` bash
 from enemy import Enemy
 import random
 
@@ -568,7 +569,7 @@ class Room:
 ```
 
 enemy.py
-```
+``` bash
 import random
 
 class Enemy:
@@ -604,7 +605,7 @@ class Boss(Enemy):
 ```
  
 combat.py
-```
+``` bash
 import random
 
 def battle(player, enemy):
@@ -741,7 +742,7 @@ By adding title screen, boss battle every even number floor and adding permanent
 
 ## Build and Test
 main.py
-```
+``` bash
 import os
 import random
 import time
@@ -939,7 +940,7 @@ if __name__ == "__main__":
 ```
 
 player.py
-```
+``` bash
 import random
 
 class Player:
@@ -1126,7 +1127,7 @@ class Player:
 ```
 
 dungeon.py
-```
+``` bash
 import random
 from room import Room
 from enemy import Boss
@@ -1241,7 +1242,7 @@ class Dungeon:
 ```
 
 room.py
-```
+``` bash
 from enemy import Enemy
 import random
 
@@ -1267,7 +1268,7 @@ class Room:
 ```
 
 enemy.py
-```
+``` bash
 import random
 
 class Enemy:
@@ -1303,7 +1304,7 @@ class Boss(Enemy):
 ```
 
 combat.py
-```
+``` bash
 import random
 
 def battle(player, enemy):
@@ -1359,7 +1360,7 @@ def battle(player, enemy):
 ```
 
 stories.txt
-```
+``` bash
 The walls are damp and echo with distant whispers.
 A rusty chandelier swings slowly from the ceiling.
 You feel a chill as you enter — something watched you.
@@ -1400,10 +1401,31 @@ Class selection, WASD movement, combat, boss battles, key collection, and  dunge
 - Analyse the performance of your program against the key use-cases you identified.
 The game successfully handles core use cases (exploration, combat, progression) but could improve boss fight mechanics and inventory depth.
 
-
-
 - Assess the quality of your code in terms of readability, structure, and maintainability.
  Modular OOP structure, clear methods, and separation of concerns.
 
 - Explain the improvements that should be made in the next stage of development.
 Adding GUI, maybe better combat if have time
+
+# Sprint 4
+## Design
+### Enhancemnts:
+- Adding GUI to improve User Experience
+- Adding Images for different enemies
+- Adding a better Combat System
+- Title Page background
+---
+Write a brief explanation of how these enhancements or features could integrate with existing code - how will you approach it?
+I would first change main.py and add more files so that I can add the GUI in using pygame. Then I'll add stronger attacks for the bossess and then I'll aadd Images and make a good format for it. After I'll add the Title Background.
+---
+## Review
+1. Evaluate how effectively your project meets the functional and non-functional requirements defined in your planning.
+
+2. Analyse the performance of your program against the key use-cases you identified.
+
+3. Assess the quality of your code in terms of readability, structure, and maintainability.
+
+4. Explain the improvements that should be made in the next stage of development.
+
+---
+## Evaluation of System
