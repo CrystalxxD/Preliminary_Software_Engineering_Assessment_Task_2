@@ -2,7 +2,7 @@
 
 This Python program is a text-based dungeon escape room game, designed as part of a software development sprint project. The player selects a class (e.g., Warrior, Mage, Archer) and explores a procedurally generated dungeon. Players can move through rooms, collect items, fight enemies, and find the exit to advance to the next floor.
 
-Features
+## Features
 - Choose a unique character class with different starting stats
 
 - Unique weapons that is better when used by particular classess
@@ -15,11 +15,11 @@ Features
 
 - Includes a mini-map displayed using text characters, showing player location, enemies, exits, and room layout.
 
-- Simple command-based interface (with GUI implementation in Sprint 4 using PySimpleGUI).
+- Simple command-based interface (with GUI implementation in Sprint 4 using Pygame).
 
 - Two dungeon floors to complete the game.
 
-Requirements
+## Requirements
 To run this program, you need to install the following dependencies:
 
 Pygame (used in Sprint 4 for GUI display and Images).
