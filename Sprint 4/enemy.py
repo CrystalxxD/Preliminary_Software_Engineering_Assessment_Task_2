@@ -100,7 +100,7 @@ class Boss(Enemy):
             {
                 "type": "Prince of Darkness", 
                 "hp": 130, 
-                "atk": 28, 
+                "atk": 16, 
                 "defn": 15,
                 "ability": "Hellfire",
                 "ability_desc": "Engulfs you in flames that ignore defense",
@@ -116,7 +116,7 @@ class Boss(Enemy):
                 "type": "Pitaya Dragon", 
                 "hp": 160, 
                 "atk": 32, 
-                "defn": 17,
+                "defn": 16,
                 "ability": "Dragon's Breath",
                 "ability_desc": "Unleashes elemental fury on all enemies",
                 "image": "Background Images/Dragon (boss) Image.png",

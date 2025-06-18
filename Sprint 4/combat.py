@@ -33,7 +33,7 @@ def battle(player, enemy, gui):
                 
             # Enemy attack (player defense divided by 4)
             enemy_attack = enemy.perform_attack(player)
-            player_defense_reduction = player.total_defense() / 4  # Player defense divided by 4
+            player_defense_reduction = player.total_defense() / 4
             enemy_damage = max(1, enemy_attack["damage"] - player_defense_reduction)
             player.hp -= enemy_damage
             
@@ -44,7 +44,7 @@ def battle(player, enemy, gui):
             if hasattr(enemy, 'illusions') and enemy.illusions:
                 total_damage = 0
                 for _ in enemy.illusions:
-                    dmg = max(0, (enemy.atk//2) - (player.total_defense() / 4))  # Player defense divided by 4
+                    dmg = max(0, (enemy.atk//2) - (player.total_defense() / 4))
                     player.hp -= dmg
                     total_damage += dmg
                 if total_damage > 0:
@@ -53,10 +53,10 @@ def battle(player, enemy, gui):
                 
         elif action == 'r':
             if is_boss:
-                damage = max(1, (player.hp // 2) - (player.total_defense() / 4))  # Player defense divided by 4
+                damage = max(1, (player.hp // 2) - (player.total_defense() / 4))
                 gui.add_message("The boss strikes you as you flee!")
             else:
-                damage = max(1, enemy.atk - (player.total_defense() / 4))  # Player defense divided by 4
+                damage = max(1, enemy.atk - (player.total_defense() / 4))
                 gui.add_message(f"{enemy.name} attacks as you flee!")
             player.hp -= damage
             gui.add_message(f"Your defense reduces it by {player.total_defense()/4:.1f}")
@@ -74,8 +74,8 @@ def battle(player, enemy, gui):
     if is_boss:
         gui.add_message(f"⭐ EPIC VICTORY! ⭐")
         player.heal(30)
-        # 50% chance for perm buff, 50% for other rewards
-        reward = random.choice(["perm_damage", "perm_defense", "weapon", "armour", "health"])
+        # Bosses always give permanent buffs
+        reward = random.choice(["perm_damage", "perm_defense"])
         result = player.pick_up_item(reward, source="boss")
         gui.add_message(f"Boss dropped: {result}")
     
