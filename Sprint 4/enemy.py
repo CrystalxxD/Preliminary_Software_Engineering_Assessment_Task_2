@@ -115,7 +115,7 @@ class Boss(Enemy):
             {
                 "type": "Pitaya Dragon", 
                 "hp": 160, 
-                "atk": 32, 
+                "atk": 21, 
                 "defn": 16,
                 "ability": "Dragon's Breath",
                 "ability_desc": "Unleashes elemental fury on all enemies",

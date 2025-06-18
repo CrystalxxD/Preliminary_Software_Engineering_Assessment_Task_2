@@ -8,6 +8,7 @@ pygame.font.init()
 font_small = pygame.font.SysFont('Arial', 14)
 font_medium = pygame.font.SysFont('Arial', 18)
 font_large = pygame.font.SysFont('Arial', 24)
+font_even_larger = pygame.font.SysFont('freesansbold', 50)
 
 class GameState:
     def __init__(self):
@@ -136,7 +137,7 @@ class GUI:
         if self.title_image:
             self.screen.blit(self.title_image, (0, 0))
         
-        title_text = font_large.render("TOWER OF BLOOD", True, RED)
+        title_text = font_even_larger.render("TOWER OF BLOOD", True, RED)
         self.screen.blit(title_text, (SCREEN_WIDTH//2 - title_text.get_width()//2, 200))
         
         if selected_class:
