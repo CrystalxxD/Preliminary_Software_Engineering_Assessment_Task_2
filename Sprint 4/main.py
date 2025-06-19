@@ -9,15 +9,17 @@ from combat import battle
 
 def load_stories():
     try:
+        # Try to load from the same directory as the script
         script_dir = os.path.dirname(os.path.abspath(__file__))
         stories_path = os.path.join(script_dir, "stories.txt")
         with open(stories_path, "r", encoding='utf-8') as file:
             return [line.strip() for line in file.readlines() if line.strip()]
     except Exception as e:
         print(f"Error loading stories: {e}")
-        return ["A mysterious room."] * 20
+        return ["A mysterious room."] * 20  # Return enough default stories
 
 def main():
+    # Initialize Pygame, fonts, and load room stories
     pygame.init()
     try:
         font_small = pygame.font.SysFont('Arial', 14)
@@ -40,11 +42,13 @@ def main():
     while running:
         mouse_pos = pygame.mouse.get_pos()
         
+        # Only check hover for relevant buttons based on current screen
         if gui.state.current_screen == "title":
             active_buttons = ["warrior", "assassin", "mage", "archer", "start", "exit"]
         elif gui.state.current_screen == "game":
             if gui.state.show_inventory:
                 active_buttons = ["close_inv"]
+                # Add dynamic inventory buttons
                 if player:
                     if "unequip_weapon" in gui.buttons:
                         active_buttons.append("unequip_weapon")
@@ -89,7 +93,7 @@ def main():
                         gui.state.show_help = True
                     elif action in ["warrior", "assassin", "mage", "archer"]:
                         selected_class = action.capitalize()
-                    elif action == "start":
+                    elif action == "start" or action == "play_again":
                         if selected_class:
                             gui.state.current_screen = "game"
                             player = Player("Player", selected_class)
@@ -98,12 +102,10 @@ def main():
                             last_room_message = ""
                             gui.state.message_log = []
                             gui.state.current_room_message = ""
-                            gui.state.inventory_scroll = 0
-                    elif action == "exit":
+                    elif action == "exit" or action == "quit":
                         running = False
                     elif action == "close_inv":
                         gui.state.show_inventory = False
-                        gui.state.inventory_scroll = 0
                     elif action == "unequip_weapon":
                         result = player.unequip_weapon()
                         gui.add_message(result)
@@ -158,7 +160,7 @@ def main():
                                 new_pos = (player.position[0] + dx, player.position[1] + dy)
                                 if dungeon.room_exists(player.floor, new_pos):
                                     player.position = new_pos
-                        elif action == 'k':
+                        elif action == 'k':  # Ascend
                             room = dungeon.get_room(player.floor, player.position)
                             if room and room.is_ascend:
                                 if player.floor < dungeon.exit_floor_index:
@@ -168,7 +170,7 @@ def main():
                                     new_room = dungeon.get_room(player.floor, player.position)
                                     if new_room:
                                         gui.state.current_room_message = f"Entered room at {player.position} - {new_room.story}"
-                        elif action == 'j':
+                        elif action == 'j':  # Descend
                             room = dungeon.get_room(player.floor, player.position)
                             if room and room.is_descend:
                                 if player.floor > 0:
@@ -185,7 +187,6 @@ def main():
                                 gui.add_message("No health potions available or already at full health!")
                         elif action == 'i':
                             gui.state.show_inventory = True
-                            gui.state.inventory_scroll = 0
             
             if event.type == KEYDOWN and gui.state.current_screen == "game" and player and dungeon:
                 if event.key == K_h:
@@ -195,7 +196,7 @@ def main():
                         gui.add_message("No health potions available or already at full health!")
                 elif event.key == K_QUESTION:
                     gui.state.show_help = True
-                elif event.key == K_k:
+                elif event.key == K_k:  # Ascend
                     room = dungeon.get_room(player.floor, player.position)
                     if room and room.is_ascend:
                         if player.floor < dungeon.exit_floor_index:
@@ -205,7 +206,7 @@ def main():
                             new_room = dungeon.get_room(player.floor, player.position)
                             if new_room:
                                 gui.state.current_room_message = f"Entered room at {player.position} - {new_room.story}"
-                elif event.key == K_j:
+                elif event.key == K_j:  # Descend
                     room = dungeon.get_room(player.floor, player.position)
                     if room and room.is_descend:
                         if player.floor > 0:
@@ -244,14 +245,17 @@ def main():
                             if dungeon.room_exists(player.floor, new_pos):
                                 player.position = new_pos
         
+        # Update room message when position changes
         if player and dungeon:
             if player.position != last_position:
                 room = dungeon.get_room(player.floor, player.position)
                 if room:
+                    # Keep the last room message for display
                     last_room_message = f"Entered room at {player.position} - {room.story}"
                     gui.state.current_room_message = last_room_message
                     last_position = player.position
                     
+                    # Pick up items and show what was found
                     if room.items:
                         found_items = []
                         for item in room.items:
@@ -261,6 +265,7 @@ def main():
                         items_message = "You found: " + ", ".join(found_items)
                         gui.add_message(items_message)
         
+        # Draw the current screen
         gui.screen.fill(BLACK)
         
         if gui.state.show_help:

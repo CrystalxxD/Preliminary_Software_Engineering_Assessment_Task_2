@@ -14,7 +14,7 @@ class GameState:
     def __init__(self):
         self.current_screen = "title"
         self.message_log = []
-        self.max_messages = 10
+        self.max_messages = 15  # Increased from 10
         self.button_clicked = None
         self.show_help = False
         self.current_room_message = ""
@@ -165,6 +165,11 @@ class GUI:
             "Use Health Potion: H",
             "Attack: A (in combat)",
             "Run: R (in combat)",
+            "Colour for Key is Yellow",
+            "Colour of Boss is Purple",
+            "Colour of Enemy is Red",
+            "Colour of Player is Blue",
+            "Colour of Stairs is Green",
             "Close Help: Any key"
         ]
         
@@ -377,17 +382,12 @@ class GUI:
         for i, msg in enumerate(self.state.message_log):
             self.screen.blit(font_medium.render(msg, True, WHITE), (20, 20 + i * 25))
         
-        room = dungeon.get_room(player.floor, player.position) if dungeon else None
-        if room:
-            self.draw_room_description(room)
         
         self.draw_stats_area(player)
         self.draw_minimap(player, dungeon)
         self.draw_action_buttons()
     
     def draw_room_description(self, room):
-        self.state.message_log = [self.state.current_room_message]
-        
         y_pos = 200
         words = room.story.split()
         current_line = ""

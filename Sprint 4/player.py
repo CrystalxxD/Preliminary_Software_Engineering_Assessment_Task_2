@@ -10,7 +10,7 @@ class Player:
             "Assassin": {"atk": 20, "defn": 5},
             "Mage": {"atk": 25, "defn": 3},
             "Archer": {"atk": 18, "defn": 6},
-            "Warrior": {"atk": 15, "defn": 10}
+            "Warrior": {"atk": 150000, "defn": 10}
         }
         self.atk = self.base_stats[char_class]["atk"]
         self.defn = self.base_stats[char_class]["defn"]

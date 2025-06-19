@@ -72,7 +72,7 @@ def battle(player, enemy, gui):
         return False
 
     if is_boss:
-        gui.add_message(f"⭐ EPIC VICTORY! ⭐")
+        gui.add_message(f"⭐ VICTORY! ⭐")
         player.heal(30)
         # Bosses always give permanent buffs
         reward = random.choice(["perm_damage", "perm_defense"])
