@@ -7,17 +7,17 @@ This Python program is a text-based dungeon escape room game, designed as part o
 
 - Unique weapons that is better when used by particular classess
 
-- Navigate a dungeon of over 30 randomly generated rooms using W, A, S, D movement keys J key for descending floors if you missed the key.
+- Navigate a dungeon of over 20 randomly generated floors with around 300 rooms using W, A, S, D movement keys J key for descending floors if you missed the key K for ascending floors.
 
-- Encounter random events including enemies (e.g., goblins, vampires), item drops, and locked doors.
+- Encounter random events including enemies (e.g. goblins, vampires), bossess (e.g. Kitsune, Prince of Darkness) and item drops
 
 - Collect health potions, damage and defense buffs, weapons, and armor.
 
 - Includes a mini-map displayed using text characters, showing player location, enemies, exits, and room layout.
 
-- Simple command-based interface (with GUI implementation in Sprint 4 using Pygame).
+- Both keyboard and onscreen buttons for movements and everything (with GUI implementation in Sprint 4 using Pygame).
 
-- Two dungeon floors to complete the game.
+- 20 dungeon floors to complete the game.
 
 ## Requirements
 To run this program, you need to install the following dependencies:
@@ -42,6 +42,8 @@ https://www.asciiart.eu/text-to-ascii-art
 ![alt text](<Background Images/Goblin (enemies) Image.png>)
 ![alt text](<Background Images/Vampire (enemies) Image.png>)
 ![alt text](<Background Images/Werewolf (enemies) Image.png>)
+
+## Boss Image
 ![alt text](<Background Images/Demon (boss) Image.png>)
 ![alt text](<Background Images/Dragon (boss) Image.png>)
 ![alt text](<Background Images/Kitsune Fox (boss) Image.png>)

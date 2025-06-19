@@ -89,5 +89,4 @@ def main():
         else:
             print("Unknown command. Type 'help' to see available options.\n")
 
-if __name__ == "__main__":
-    main()
+main()

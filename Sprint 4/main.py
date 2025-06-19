@@ -9,17 +9,15 @@ from combat import battle
 
 def load_stories():
     try:
-        # Try to load from the same directory as the script
         script_dir = os.path.dirname(os.path.abspath(__file__))
         stories_path = os.path.join(script_dir, "stories.txt")
         with open(stories_path, "r", encoding='utf-8') as file:
             return [line.strip() for line in file.readlines() if line.strip()]
     except Exception as e:
         print(f"Error loading stories: {e}")
-        return ["A mysterious room."] * 20  # Return enough default stories
+        return ["A mysterious room."] * 20
 
 def main():
-    # Initialize Pygame, fonts, and load room stories
     pygame.init()
     try:
         font_small = pygame.font.SysFont('Arial', 14)
@@ -42,13 +40,11 @@ def main():
     while running:
         mouse_pos = pygame.mouse.get_pos()
         
-        # Only check hover for relevant buttons based on current screen
         if gui.state.current_screen == "title":
             active_buttons = ["warrior", "assassin", "mage", "archer", "start", "exit"]
         elif gui.state.current_screen == "game":
             if gui.state.show_inventory:
                 active_buttons = ["close_inv"]
-                # Add dynamic inventory buttons
                 if player:
                     if "unequip_weapon" in gui.buttons:
                         active_buttons.append("unequip_weapon")
@@ -59,13 +55,11 @@ def main():
                     for i in range(len(player.inventory["unequipped_armour"])):
                         active_buttons.append(f"equip_armour_{i}")
             else:
-                active_buttons = ["w", "a", "s", "d", "k", "j", "i", "h", "help"]
+                active_buttons = ["w", "a", "s", "d", "k", "j", "i", "h", "help", "e"]
                 if player and dungeon:
                     room = dungeon.get_room(player.floor, player.position)
                     if room and room.has_enemy and room.enemy and room.enemy.hp > 0:
                         active_buttons.extend(["attack", "run"])
-        else:
-            active_buttons = []
 
         for name, button in gui.buttons.items():
             button.is_hovered = False
@@ -172,14 +166,19 @@ def main():
                                         gui.state.current_room_message = f"Entered room at {player.position} - {new_room.story}"
                         elif action == 'j':  # Descend
                             room = dungeon.get_room(player.floor, player.position)
-                            if room and room.is_descend:
+                            if room and room.has_enemy and room.enemy and room.enemy.hp > 0:
+                                gui.add_message("You must defeat the enemy before descending!")
+                            else:
                                 if player.floor > 0:
                                     player.floor -= 1
-                                    player.position = (0, 0)
+                                    if not dungeon.room_exists(player.floor, player.position):
+                                        player.position = (0, 0)
                                     gui.add_message(f"You descend to Floor {player.floor + 1}!")
                                     new_room = dungeon.get_room(player.floor, player.position)
                                     if new_room:
                                         gui.state.current_room_message = f"Entered room at {player.position} - {new_room.story}"
+                                else:
+                                    gui.add_message("You can't descend from the bottom floor!")
                         elif action == 'h':
                             if player.use_health_potion():
                                 gui.add_message("You used a health potion (+10 HP).")
@@ -187,6 +186,16 @@ def main():
                                 gui.add_message("No health potions available or already at full health!")
                         elif action == 'i':
                             gui.state.show_inventory = True
+                        elif action == 'e':  # Exit interaction
+                            room = dungeon.get_room(player.floor, player.position)
+                            if room and room.is_exit:
+                                if player.has_key:
+                                    gui.add_message("⭐ YOU ESCAPED THE TOWER! ⭐")
+                                    pygame.time.delay(2000)
+                                    gui.state.current_screen = "title"
+                                    player = None
+                                else:
+                                    gui.add_message("You need the golden key to unlock the exit!")
             
             if event.type == KEYDOWN and gui.state.current_screen == "game" and player and dungeon:
                 if event.key == K_h:
@@ -208,14 +217,29 @@ def main():
                                 gui.state.current_room_message = f"Entered room at {player.position} - {new_room.story}"
                 elif event.key == K_j:  # Descend
                     room = dungeon.get_room(player.floor, player.position)
-                    if room and room.is_descend:
+                    if room and room.has_enemy and room.enemy and room.enemy.hp > 0:
+                        gui.add_message("You must defeat the enemy before descending!")
+                    else:
                         if player.floor > 0:
                             player.floor -= 1
-                            player.position = (0, 0)
+                            if not dungeon.room_exists(player.floor, player.position):
+                                player.position = (0, 0)
                             gui.add_message(f"You descend to Floor {player.floor + 1}!")
                             new_room = dungeon.get_room(player.floor, player.position)
                             if new_room:
                                 gui.state.current_room_message = f"Entered room at {player.position} - {new_room.story}"
+                        else:
+                            gui.add_message("You can't descend from the bottom floor!")
+                elif event.key == K_e:  # Exit interaction
+                    room = dungeon.get_room(player.floor, player.position)
+                    if room and room.is_exit:
+                        if player.has_key:
+                            gui.add_message("⭐ YOU ESCAPED THE TOWER! ⭐")
+                            pygame.time.delay(2000)
+                            gui.state.current_screen = "title"
+                            player = None
+                        else:
+                            gui.add_message("You need the golden key to unlock the exit!")
                 else:
                     room = dungeon.get_room(player.floor, player.position)
                     if room and room.has_enemy and room.enemy and room.enemy.hp > 0:
@@ -245,27 +269,30 @@ def main():
                             if dungeon.room_exists(player.floor, new_pos):
                                 player.position = new_pos
         
-        # Update room message when position changes
         if player and dungeon:
             if player.position != last_position:
                 room = dungeon.get_room(player.floor, player.position)
                 if room:
-                    # Keep the last room message for display
                     last_room_message = f"Entered room at {player.position} - {room.story}"
                     gui.state.current_room_message = last_room_message
                     last_position = player.position
                     
-                    # Pick up items and show what was found
                     if room.items:
                         found_items = []
-                        for item in room.items:
+                        for item in room.items[:]:
+                            if item == "key" and player.has_key:
+                                continue
                             result = player.pick_up_item(item)
-                            found_items.append(result)
-                        room.items = []
-                        items_message = "You found: " + ", ".join(found_items)
-                        gui.add_message(items_message)
+                            if result:
+                                found_items.append(result)
+                                room.items.remove(item)
+                                if item == "key":
+                                    room.has_key = False
+                        
+                        if found_items:
+                            items_message = "You found: " + ", ".join(found_items)
+                            gui.add_message(items_message)
         
-        # Draw the current screen
         gui.screen.fill(BLACK)
         
         if gui.state.show_help:
@@ -291,4 +318,5 @@ def main():
         clock.tick(60)
 
     pygame.quit()
+
 main()

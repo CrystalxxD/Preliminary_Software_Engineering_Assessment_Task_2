@@ -189,5 +189,4 @@ def main():
                     if not dungeon.room_exists(player.floor, player.position):
                         player.position = (0, 0)
 
-if __name__ == "__main__":
-    main()
+main()

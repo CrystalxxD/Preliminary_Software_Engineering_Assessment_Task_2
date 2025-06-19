@@ -12,68 +12,66 @@ font_even_larger = pygame.font.SysFont('freesansbold', 50)
 
 class GameState:
     def __init__(self):
-        self.current_screen = "title"
-        self.message_log = []
-        self.max_messages = 15  # Increased from 10
-        self.button_clicked = None
-        self.show_help = False
-        self.current_room_message = ""
-        self.show_inventory = False
-        self.inventory_scroll = 0
+        self.current_screen = "title" # Tracks current screen (title/game)
+        self.message_log = [] # Stores game messages
+        self.max_messages = 15 # Limit for displayed messages
+        self.button_clicked = None # Tracks clicked button
+        self.show_help = False # Toggles help menu
+        self.current_room_message = "" # Current room description
+        self.show_inventory = False  # Toggles inventory screen
+        self.inventory_scroll = 0 # Scroll position for inventory
 
 class Button:
     def __init__(self, x, y, width, height, text, color, hover_color, action=None):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.text = text
-        self.color = color
-        self.hover_color = hover_color
-        self.action = action
-        self.is_hovered = False
+        self.rect = pygame.Rect(x, y, width, height)  # Button dimensions
+        self.text = text  # Button label
+        self.color = color  # Default color
+        self.hover_color = hover_color  # Color when hovered
+        self.action = action  # Action triggered on click
+        self.is_hovered = False  # Tracks hover state
         
     def draw(self, surface):
-        color = self.hover_color if self.is_hovered else self.color
+        color = self.hover_color if self.is_hovered else self.color  # Change color on hover
         pygame.draw.rect(surface, color, self.rect, border_radius=5)
         pygame.draw.rect(surface, BLACK, self.rect, 2, border_radius=5)
-        
         text_surf = font_medium.render(self.text, True, BLACK)
         text_rect = text_surf.get_rect(center=self.rect.center)
         surface.blit(text_surf, text_rect)
         
     def check_hover(self, pos):
-        self.is_hovered = self.rect.collidepoint(pos)
+        self.is_hovered = self.rect.collidepoint(pos)  # Check if mouse is over button
         return self.is_hovered
 
 class GUI:
     def __init__(self, room_stories):
-        self.room_stories = room_stories
+        self.room_stories = room_stories  # Room descriptions
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Tower of Blood")
         self.state = GameState()
-        self.buttons = self.create_buttons()
-        self.enemy_images = {}
+        self.buttons = self.create_buttons()  # Initialize all buttons
+        self.enemy_images = {}  # Cache for loaded enemy images
         self.title_image = self.load_background_image("Background Images/Title Page Background.png")
     
     def wait_for_input(self, valid_inputs):
-        while True:
+        while True:  # Wait for valid input
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     exit()
                 if event.type == KEYDOWN:
                     if chr(event.key).lower() in valid_inputs:
-                        return chr(event.key).lower()
+                        return chr(event.key).lower()  # Return key pressed
                     if event.key == K_ESCAPE:
-                        return 'r'
+                        return 'r'  # Escape defaults to run
                 if event.type == MOUSEBUTTONDOWN and event.button == 1:
                     for button in [self.buttons["attack"], self.buttons["run"]]:
                         if button.rect.collidepoint(event.pos):
-                            return button.action[-1]
+                            return button.action[-1]  # Return last character of action (a/r)
             pygame.time.delay(100)
     
     def load_image(self, path):
-        if path in self.enemy_images:
+        if path in self.enemy_images: # Check if image is already loaded
             return self.enemy_images[path]
-            
         try:
             image = pygame.image.load(path).convert_alpha()
             self.enemy_images[path] = image
@@ -102,65 +100,60 @@ class GUI:
     
     def create_buttons(self):
         buttons = {
-            "w": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH + 70, 550, 70, 50, "Up", LIGHT_GRAY, WHITE, "w"),
-            "a": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 600, 70, 50, "Left", LIGHT_GRAY, WHITE, "a"),
-            "s": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH + 70, 600, 70, 50, "Down", LIGHT_GRAY, WHITE, "s"),
-            "d": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH + 140, 600, 70, 50, "Right", LIGHT_GRAY, WHITE, "d"),
-            "k": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 550, 70, 50, "Ascend", LIGHT_GRAY, WHITE, "k"),
-            "j": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH + 140, 550, 70, 50, "Descend", LIGHT_GRAY, WHITE, "j"),
-            "i": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 400, 100, 40, "Inventory", LIGHT_GRAY, WHITE, "i"),
-            "h": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 450, 100, 40, "Heal", LIGHT_GRAY, WHITE, "h"),
-            "help": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 350, 100, 40, "Help", YELLOW, (255, 255, 150), "help"),
-            "attack": Button(GAME_AREA_WIDTH//2 - 120, 600, 100, 40, "Attack", RED, (255, 100, 100), "attack"),
-            "run": Button(GAME_AREA_WIDTH//2 + 20, 600, 100, 40, "Run", BLUE, (100, 100, 255), "run"),
-            "start": Button(SCREEN_WIDTH//2 - 100, 400, 200, 50, "Start Game", GREEN, (100, 255, 100), "start"),
-            "exit": Button(SCREEN_WIDTH//2 - 100, 470, 200, 50, "Exit", RED, (255, 100, 100), "exit"),
-            "play_again": Button(SCREEN_WIDTH//2 - 100, 400, 200, 50, "Play Again", GREEN, (100, 255, 100), "start"),
-            "quit": Button(SCREEN_WIDTH//2 - 100, 470, 200, 50, "Quit", RED, (255, 100, 100), "exit"),
-            "warrior": Button(SCREEN_WIDTH//2 - 220, 300, 100, 40, "Warrior", BLUE, (100, 100, 255), "warrior"),
-            "assassin": Button(SCREEN_WIDTH//2 - 110, 300, 100, 40, "Assassin", RED, (255, 100, 100), "assassin"),
-            "mage": Button(SCREEN_WIDTH//2, 300, 100, 40, "Mage", PINK, (255, 150, 200), "mage"),
-            "archer": Button(SCREEN_WIDTH//2 + 110, 300, 100, 40, "Archer", GREEN, (100, 255, 100), "archer"),
-            "close_inv": Button(SCREEN_WIDTH//2 - 100, 650, 200, 40, "Close Inventory", RED, (255, 100, 100), "close_inv")
+            "w": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH + 70, 550, 70, 50, "Up", LIGHT_GRAY, WHITE, "w"), # Up button
+            "a": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 600, 70, 50, "Left", LIGHT_GRAY, WHITE, "a"), # Left button
+            "s": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH + 70, 600, 70, 50, "Down", LIGHT_GRAY, WHITE, "s"), # Down button
+            "d": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH + 140, 600, 70, 50, "Right", LIGHT_GRAY, WHITE, "d"), # Right button
+            "k": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 550, 70, 50, "Ascend", LIGHT_GRAY, WHITE, "k"), # Ascend button
+            "j": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH + 140, 550, 70, 50, "Descend", LIGHT_GRAY, WHITE, "j"), # Descend button
+            "e": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH + 70, 500, 70, 40, "Exit", CYAN, (150, 255, 255), "e"), # Exit button
+            "i": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 400, 100, 40, "Inventory", LIGHT_GRAY, WHITE, "i"), # Inventory button
+            "h": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 450, 100, 40, "Heal", LIGHT_GRAY, WHITE, "h"), # Heal button
+            "help": Button(GAME_AREA_WIDTH + STATS_AREA_WIDTH, 350, 100, 40, "Help", YELLOW, (255, 255, 150), "help"), # Help button
+            "attack": Button(GAME_AREA_WIDTH//2 - 120, 600, 100, 40, "Attack", RED, (255, 100, 100), "attack"), # Attack button
+            "run": Button(GAME_AREA_WIDTH//2 + 20, 600, 100, 40, "Run", BLUE, (100, 100, 255), "run"), # Run button
+            "start": Button(SCREEN_WIDTH//2 - 100, 400, 200, 50, "Start Game", GREEN, (100, 255, 100), "start"), # Start button
+            "exit": Button(SCREEN_WIDTH//2 - 100, 470, 200, 50, "Exit", RED, (255, 100, 100), "exit"), # Exit button
+            "play_again": Button(SCREEN_WIDTH//2 - 100, 400, 200, 50, "Play Again", GREEN, (100, 255, 100), "start"), # Play Again button
+            "quit": Button(SCREEN_WIDTH//2 - 100, 470, 200, 50, "Quit", RED, (255, 100, 100), "exit"), # Quit button
+            "warrior": Button(SCREEN_WIDTH//2 - 220, 300, 100, 40, "Warrior", BLUE, (100, 100, 255), "warrior"), # Warrior button
+            "assassin": Button(SCREEN_WIDTH//2 - 110, 300, 100, 40, "Assassin", RED, (255, 100, 100), "assassin"), # Assassin button
+            "mage": Button(SCREEN_WIDTH//2, 300, 100, 40, "Mage", PINK, (255, 150, 200), "mage"), # Mage button
+            "archer": Button(SCREEN_WIDTH//2 + 110, 300, 100, 40, "Archer", GREEN, (100, 255, 100), "archer"), # Archer button
+            "close_inv": Button(SCREEN_WIDTH//2 - 100, 650, 200, 40, "Close Inventory", RED, (255, 100, 100), "close_inv") # Close Inventory button
         }
         
         for i in range(6):
             x_pos = GAME_AREA_WIDTH + STATS_AREA_WIDTH + (i % 3) * 100
             y_pos = 200 + (i // 3) * 50
             buttons[f"inv_{i}"] = Button(x_pos, y_pos, 90, 40, f"Slot {i+1}", LIGHT_GRAY, WHITE, f"inv_{i}")
-            
         return buttons
     
-    def draw_title_screen(self, selected_class=None):
+    def draw_title_screen(self, selected_class=None): # Draws the title screen with class selection
         self.screen.fill(BLACK)
-        
         if self.title_image:
             self.screen.blit(self.title_image, (0, 0))
-        
         title_text = font_even_larger.render("TOWER OF BLOOD", True, RED)
         self.screen.blit(title_text, (SCREEN_WIDTH//2 - title_text.get_width()//2, 200))
-        
         if selected_class:
             class_text = font_medium.render(f"Selected: {selected_class}", True, WHITE)
             self.screen.blit(class_text, (SCREEN_WIDTH//2 - class_text.get_width()//2, 350))
-        
         self.buttons["start"].draw(self.screen)
         self.buttons["exit"].draw(self.screen)
         for cls in ["warrior", "assassin", "mage", "archer"]:
             self.buttons[cls].draw(self.screen)
     
-    def draw_help_menu(self):
+    def draw_help_menu(self): # Draws the help menu with controls
         help_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         help_surface.fill((0, 0, 0, 200))
         self.screen.blit(help_surface, (0, 0))
-        
         title = font_large.render("HELP / CONTROLS", True, YELLOW)
         self.screen.blit(title, (SCREEN_WIDTH//2 - title.get_width()//2, 100))
-        
         controls = [
             "Movement: W (Up), A (Left), S (Down), D (Right)",
             "Ascend Floor: K (when on stairs)",
             "Descend Floor: J (when on stairs)",
+            "Use Exit: E (when at exit with key)",
             "Inventory: I",
             "Use Health Potion: H",
             "Attack: A (in combat)",
@@ -169,30 +162,27 @@ class GUI:
             "Colour of Boss is Purple",
             "Colour of Enemy is Red",
             "Colour of Player is Blue",
-            "Colour of Stairs is Green",
+            "Colour of Stairs: Green=Up, Red=Down",
+            "Colour of Exit is Cyan",
             "Close Help: Any key"
         ]
-        
         y_pos = 200
         for control in controls:
             text = font_medium.render(control, True, WHITE)
             self.screen.blit(text, (SCREEN_WIDTH//2 - text.get_width()//2, y_pos))
             y_pos += 40
-        
-        instruction = font_medium.render("Press any key to return", True, YELLOW)
+        instruction = font_medium.render("Press any key to return", True, YELLOW) # Instruction to close help
         self.screen.blit(instruction, (SCREEN_WIDTH//2 - instruction.get_width()//2, 500))
     
-    def draw_inventory(self, player):
+    def draw_inventory(self, player): # Draws the inventory screen
         inv_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         inv_surface.fill((0, 0, 0, 200))
         self.screen.blit(inv_surface, (0, 0))
         
-        # Handle scrolling with mouse wheel
         for event in pygame.event.get():
             if event.type == pygame.MOUSEWHEEL:
                 self.state.inventory_scroll -= event.y * 20
         
-        # Limit scroll range
         max_scroll = max(0, (len(player.inventory["unequipped_weapons"]) + 
                         len(player.inventory["unequipped_armour"])) * 30 - 400)
         self.state.inventory_scroll = max(0, min(self.state.inventory_scroll, max_scroll))
@@ -203,7 +193,6 @@ class GUI:
         self.screen.blit(title, (SCREEN_WIDTH//2 - title.get_width()//2, y_pos))
         y_pos += 50
         
-        # Display buff status
         buff_status = player.get_buff_status()
         if buff_status:
             buff_title = font_medium.render("Active Buffs:", True, YELLOW)
@@ -215,12 +204,10 @@ class GUI:
                 y_pos += 25
             y_pos += 10
         
-        # Equipped items
         equipped_title = font_medium.render("Equipped Items:", True, WHITE)
         self.screen.blit(equipped_title, (SCREEN_WIDTH//2 - 300, y_pos))
         y_pos += 30
         
-        # Weapon slot
         if player.inventory["weapons"]:
             weapon = player.inventory["weapons"][0]
             weapon_text = font_small.render(f"Weapon: {weapon['name']}", True, WHITE)
@@ -233,7 +220,6 @@ class GUI:
             self.screen.blit(weapon_text, (SCREEN_WIDTH//2 - 300, y_pos))
         y_pos += 30
         
-        # Armor slot
         if player.inventory["armour"]:
             armour = player.inventory["armour"]
             armour_text = font_small.render(f"Armour: {armour}", True, WHITE)
@@ -246,7 +232,6 @@ class GUI:
             self.screen.blit(armour_text, (SCREEN_WIDTH//2 - 300, y_pos))
         y_pos += 40
         
-        # Unequipped weapons
         if player.inventory["unequipped_weapons"]:
             weapons_text = font_medium.render("Unequipped Weapons:", True, WHITE)
             self.screen.blit(weapons_text, (SCREEN_WIDTH//2 - 300, y_pos))
@@ -261,7 +246,6 @@ class GUI:
                 y_pos += 30
             y_pos += 10
         
-        # Unequipped armour
         if player.inventory["unequipped_armour"]:
             armour_text = font_medium.render("Unequipped Armour:", True, WHITE)
             self.screen.blit(armour_text, (SCREEN_WIDTH//2 - 300, y_pos))
@@ -276,11 +260,9 @@ class GUI:
                 y_pos += 30
             y_pos += 10
         
-        # Potions
         potion_text = font_medium.render(f"Health Potions: {player.inventory['health']}", True, WHITE)
         self.screen.blit(potion_text, (SCREEN_WIDTH//2 - 300, y_pos))
         
-        # Scroll indicator
         if max_scroll > 0:
             scroll_bar_height = 300
             scroll_bar_pos = (SCREEN_WIDTH - 20, 150 + (self.state.inventory_scroll/max_scroll) * scroll_bar_height)
@@ -373,7 +355,7 @@ class GUI:
                                      GAME_AREA_WIDTH + STATS_AREA_WIDTH, 0, MINIMAP_SIZE, MINIMAP_SIZE)
     
     def draw_action_buttons(self):
-        for key in ['w', 'a', 's', 'd', 'k', 'j', 'i', 'h', 'help']:
+        for key in ['w', 'a', 's', 'd', 'k', 'j', 'e', 'i', 'h', 'help']:
             self.buttons[key].draw(self.screen)
     
     def draw_game_screen(self, player, dungeon):
@@ -381,7 +363,6 @@ class GUI:
         
         for i, msg in enumerate(self.state.message_log):
             self.screen.blit(font_medium.render(msg, True, WHITE), (20, 20 + i * 25))
-        
         
         self.draw_stats_area(player)
         self.draw_minimap(player, dungeon)
@@ -416,28 +397,25 @@ class GUI:
             y_pos += 40
         
         if room.is_ascend:
-            if room.has_enemy and isinstance(room.enemy, Boss):
-                stairs_text = font_medium.render("BOSS GUARDING ASCENDING STAIRS (press K)!", True, PURPLE)
-            else:
-                stairs_text = font_medium.render("There is an ascending staircase here (press K).", True, GREEN)
+            stairs_text = font_medium.render("There is an ascending staircase here (press K).", True, GREEN)
             self.screen.blit(stairs_text, (20, y_pos))
             y_pos += 30
         
         if room.is_descend:
-            if room.has_enemy and isinstance(room.enemy, Boss):
-                stairs_text = font_medium.render("BOSS GUARDING DESCENDING STAIRS (press J)!", True, PURPLE)
-            else:
-                stairs_text = font_medium.render("There is a descending staircase here (press J).", True, RED)
+            stairs_text = font_medium.render("There is a descending staircase here (press J).", True, RED)
             self.screen.blit(stairs_text, (20, y_pos))
             y_pos += 30
         
         if room.has_key:
-            key_text = font_medium.render("You see a shiny key!", True, YELLOW)
+            key_text = font_medium.render("You see a shiny golden key!", True, YELLOW)
             self.screen.blit(key_text, (20, y_pos))
             y_pos += 30
         
         if room.is_exit:
-            exit_text = font_large.render("THE EXIT!", True, GREEN)
+            if Player.has_key:
+                exit_text = font_large.render("THE EXIT (Press E to escape!)", True, CYAN)
+            else:
+                exit_text = font_large.render("THE EXIT (Need golden key)", True, YELLOW)
             self.screen.blit(exit_text, (20, y_pos))
         
         if room.items:

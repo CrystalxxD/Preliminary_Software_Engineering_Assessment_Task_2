@@ -10,7 +10,7 @@ class Player:
             "Assassin": {"atk": 20, "defn": 5},
             "Mage": {"atk": 25, "defn": 3},
             "Archer": {"atk": 18, "defn": 6},
-            "Warrior": {"atk": 150000, "defn": 10}
+            "Warrior": {"atk": 15, "defn": 10}
         }
         self.atk = self.base_stats[char_class]["atk"]
         self.defn = self.base_stats[char_class]["defn"]
@@ -51,7 +51,10 @@ class Player:
         self.hp = min(100, self.hp + amount)
 
     def pick_up_item(self, item, source="normal"):
-        if item == "health":
+        if item == "key":
+            self.has_key = True
+            return "Key (required to exit the dungeon)"
+        elif item == "health":
             self.inventory["health"] += 1
             return "Health potion"
         elif item == "damage_buff":
@@ -68,13 +71,21 @@ class Player:
         elif item == "perm_defense":
             self.permanent_buffs["defense"] += 1
             return "PERMANENT +1 Defense"
-        elif item == "key":
-            self.has_key = True
-            return "Key"
         elif item == "weapon":
-            types = ["sword", "dagger", "bow", "staff"]
-            chosen_type = random.choice(types)
-            bonus = random.randint(3, 8)
+            # Define class-specific weapon types
+            class_weapons = {
+                "Warrior": "sword",
+                "Assassin": "dagger",
+                "Mage": "staff",
+                "Archer": "bow"
+            }
+            
+            chosen_type = class_weapons.get(self.char_class, random.choice(["sword", "dagger", "bow", "staff"]))
+            base_bonus = random.randint(3, 8)
+            
+            # Add +2 bonus if weapon matches class
+            bonus = base_bonus + 2 if chosen_type == class_weapons.get(self.char_class) else base_bonus
+            
             new_weapon = {
                 "name": f"+{bonus} {chosen_type.capitalize()}",
                 "bonus": bonus,
@@ -144,8 +155,8 @@ class Player:
                     self.temp_buffs[stat] = 0
 
     def use_health_potion(self):
-        if self.inventory["health"] > 0 and self.hp < 100:
-            self.heal(10)
+        if self.inventory["health"] > 0 and self.hp < 100: 
+            self.heal(10) # Heal by 10
             self.inventory["health"] -= 1
             return True
         return False
